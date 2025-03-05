@@ -1,9 +1,8 @@
 import hashlib
 import json
 import time
-import threading
-import subprocess
 import os
+import random
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
@@ -196,6 +195,49 @@ def send_message_through_path(start_node, end_node, message):
         current_node.send_message(next_node, message, len(nodes))
         current_node = next_node
 
+# Função de Algoritmo Genético para otimizar o roteamento
+def genetic_algorithm(nodes, generations=100, population_size=50):
+    def fitness(path):
+        total_distance = 0
+        for i in range(len(path) - 1):
+            total_distance += get_distance(nodes[path[i]], nodes[path[i+1]])
+        return total_distance
+
+    def generate_random_path():
+        path = list(range(len(nodes)))
+        random.shuffle(path)
+        return path
+
+    def crossover(parent1, parent2):
+        point = random.randint(1, len(parent1) - 1)
+        child = parent1[:point] + parent2[point:]
+        return child
+
+    def mutate(path):
+        i = random.randint(0, len(path) - 1)
+        j = random.randint(0, len(path) - 1)
+        path[i], path[j] = path[j], path[i]
+        return path
+
+    population = [generate_random_path() for _ in range(population_size)]
+    for generation in range(generations):
+        population.sort(key=lambda path: fitness(path))
+        new_population = population[:2]  # Seleção dos melhores
+        while len(new_population) < population_size:
+            parent1, parent2 = random.sample(population[:10], 2)
+            child = crossover(parent1, parent2)
+            child = mutate(child)
+            new_population.append(child)
+        population = new_population
+    return population[0]
+
+# Função para obter a distância entre dois nós (exemplo simples)
+def get_distance(node1, node2):
+    for neighbor, distance in node1.neighbors:
+        if neighbor.id == node2.id:
+            return distance
+    return float('inf')
+
 # Exemplo de uso
 filename = "tsp1_253.txt"
 nodes = read_graph_from_file(filename)  # Lê os nós do arquivo
@@ -218,6 +260,4 @@ send_message_through_path(start_node, end_node, "Ola,Mundo!")
 # Exibe a blockchain de todos os nós
 print("\nBlockchain dos nos:")
 for node in nodes:
-    print(f"Blockchain do No {node.id}:")
-    for block in node.blockchain.chain:
-        print(block)
+    print(f"\nNo {node.id} - Blockchain: {node.blockchain.chain}")
