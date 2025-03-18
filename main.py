@@ -2,11 +2,14 @@ import numpy as np
 import random
 
 def fill_pings(path):
-    n=10
-    path = np.random.randint(1,101, size=(n,n))
+    """
+        Preenche a matriz 'path' com valores aleatórios e simétricos com a diagonal zerada
+    """
+    n=10    # Tamanho da matriz
+    path = np.random.randint(1,101, size=(n,n))  # Números entre esse intervalo
     for i in range(n):
         for j in range(i+1, n):
-            path[j, i] = path[i, j]
+            path[j, i] = path[i, j]  # Torna a matriz simétrica
     np.fill_diagonal(path,0)
     return path    
 
@@ -40,6 +43,8 @@ path = fill_pings(path)
 print(path)
 final_cost, final_way = find_shortest_way(path)
 print(f"O custo final foi de: {final_cost} e este foi o caminho percorrido: {final_way}")
+
+#TODO: Terminar de comentar
 
 
 
