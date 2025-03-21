@@ -180,7 +180,7 @@ if __name__ == '__main__':
     # Encontra a rota e propaga a mensagem criptografada,
     # registrando cada etapa no blockchain
     final_cost, final_way, final_encrypted_message = find_shortest_way(path, encrypted_message, blockchain)
-
+    
     # Exibe o conteúdo do blockchain (cada bloco)
     print("\n--- Blockchain ---")
     for block in blockchain.chain:
@@ -192,7 +192,7 @@ if __name__ == '__main__':
         print(f"Hash: {block.hash}\n")
 
     print(f"O custo final foi de: {final_cost} e este foi o caminho percorrido: {final_way}")
-    
+  
     # No destino, descriptografa a mensagem usando a chave privada
     if final_way[-1] == n - 1 and final_encrypted_message is not None:
         decrypted_message = decrypt_message(final_encrypted_message, private_key)
